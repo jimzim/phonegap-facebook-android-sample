@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <style>
+      #login-facebook {
+        display: block;
+        width: 400px;
+        height: 76px;
+        margin: 320px 0 0 420px;
+        background: url(img/button-facebook.png);
+        }
+
+/*        #myform {
+          display: block;
+          width: 400px;
+          height: 200px;
+          margin: 420px 0 0 420px;
+        }*/
+    </style>
+
+    </head>
+  <body>
+    <script src="lib/jquery-1.9.1.min.js"></script>
+
+    <button onclick="login()">Login</button>
+    <button onclick="askForWritePerm()">Write Permissions</button> 
+    <button onclick="facebookWallPost()">Wall Post</button> 
+    <button onclick="logout()">Logout</button>
+
+<!--         <a href="#" id="login-facebook" onclick="login()"></a> -->
+
+        <div id="data"></div>
+
+        <div id="fb-root"></div>
+    <!-- cordova -->
+    <script src="cordova.js"></script>
+      <!-- cordova facebook plugin -->
+    <script src="cdv-plugin-fb-connect.js"></script>
+      <!-- facebook js sdk -->
+    <script src="facebook-js-sdk.js"></script>
+        
+    <script>
+            
+            FB.Event.subscribe('auth.login', function(response) {
+                console.log('login event:' + JSON.stringify(response));
+            });
+
+            function me() {
+
+                  FB.api('/me?fields=picture,name,email', function(user) {
+                        console.log('response from facebook: ' + JSON.stringify(user));
+                        var profilePictureUrl = '';
+                        if (user.picture.data) {
+                          profilePictureUrl = user.picture.data.url;
+                        } else {
+                          profilePictureUrl = user.picture;
+                        }
+                        console.log('userId: ' + user.id);
+                        console.log('name: ' + user.name);
+                        console.log('email: ' + user.email);
+                        console.log('picture url: ' + profilePictureUrl);
+
+                        $('#log').html(user.name);
+
+                    });
+            }
+            
+            function logout() {
+                FB.logout(function(response) {
+                    console.log('logout response:' + JSON.stringify(response));
+                    alert('logged out');
+                });
+            }
+            
+            function login() {
+                FB.login( function(response) {
+                          
+                   if (response.authResponse) {
+                        //alert('logged in now');
+                        console.log('login response:' + response.authResponse);
+                        me();
+                   } else {
+                        //alert('not logged in on login');
+                        console.log('login response:' + response.error);
+                   }
+                   },
+                   { scope: "email" }
+                   );
+            }
+
+            function askForWritePerm() {
+                FB.login(
+                   function(response) {
+                    
+                     if (response.authResponse) {
+                          //alert('logged in now');
+                          console.log('login response:' + response.authResponse);
+                          // me();
+                     } else {
+                          //alert('not logged in on login');
+                          console.log('login response:' + response.error);
+                     }
+                   },
+                   { scope: "publish_actions" } 
+                   );
+            }
+      
+      
+            function facebookWallPost() {
+                console.log('Debug 1');
+              var params = {
+                  method: 'feed',
+                  name: 'Facebook Dialogs',
+                  link: 'https://developers.facebook.com/docs/reference/dialogs/',
+                  picture: 'http://fbrell.com/f8.jpg',
+                  caption: 'Reference Documentation',
+                  description: 'Dialogs provide a simple, consistent interface for applications to interface with users.'
+                };
+              console.log(params);
+                FB.ui(params, function(obj) { console.log(obj);});
+            }
+            
+            document.addEventListener('deviceready', function() {
+                try {
+                    alert('Device is ready! Make sure you set your app_id below this alert.');
+                    FB.init({ 
+                      appId: "1379513045604984", 
+                      nativeInterface: CDV.FB, 
+                      useCachedDialogs: false 
+                    });
+                    document.getElementById('data').innerHTML = "";
+                } catch (e) {
+                    alert(e);
+                }
+            }, false);
+
+            $(document).on("ready", function () {
+                //$('#log').html('jQuery loaded');
+
+            });
+
+            </script>
+        <div id="log"></div>
+
+
+  </body>
+</html>
