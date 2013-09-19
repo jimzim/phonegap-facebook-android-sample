@@ -5,6 +5,24 @@ It took me a while to figure out how to get this to work by having to go through
 
 A simple sample to show how to use the Facebook native login with Phonegap 3.0 and a modified version of https://github.com/phonegap/phonegap-facebook-plugin with this pull request: https://github.com/phonegap/phonegap-facebook-plugin/pull/348  and some other config options found in this thread.
 
+First you need to make sure you have your android build settings set up to match your sdk path, and build targets.  Typically this would not be checked into source control, but I am trying to make this as painless as possible to get started with a demo.
+
+Open this file:  platforms/android/local.properties and put the appropriate path in your environment here
+```
+sdk.dir=/Users/jimzimmerman/Documents/adt-bundle-mac-x86_64/sdk
+```
+
+Open this file:  platforms/android/project.properties and put the appropriate target you have installed, in my case it is version 18, yours may be 17
+```
+target=android-18
+```
+
+Open this file: platforms/android/AndroidManifest.xml, change this to 17 if you don't have 18 installed.
+```
+android:targetSdkVersion="18" 
+```
+
+
 Add your Facebook app id in index.html
 
 ```js
